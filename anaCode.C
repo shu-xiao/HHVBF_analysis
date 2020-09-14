@@ -46,6 +46,7 @@ RVec<Int_t> doSelection(Int_t nThinJet, rvec_f Jet_pt, rvec_f Jet_eta, rvec_f Je
     return RVec<Int_t> {-1,-1};
 }
 void anaCode() {
+    //ROOT::EnableImplicitMT(0);
     TFile *f = TFile::Open("VBF_HHTo4B_CV_1_5_C2V_1_C3_1_mc_10K_ok.root");
     TTree *t1 = (TTree *)f->Get("btagana/ttree");
     TTree *t2 = (TTree *)f->Get("btaganaFatJets/ttree");
@@ -55,19 +56,26 @@ void anaCode() {
     auto d = d0;
     auto d1 = d.Filter("FatJetInfo.nJet>=2","nJet>=2");
     auto d2 = d1.Filter("abs(FatJetInfo.Jet_eta[0])<3. && abs(FatJetInfo.Jet_eta[1])<3.","eta cut");
-    auto d3 = d2.Filter("abs(FatJetInfo.Jet_pt[0])>300. && abs(FatJetInfo.Jet_pt[1])>300.","pt cut");
-    auto d4 = d3.Filter("FatJetInfo.Jet_massSoftDrop[0]>90. && FatJetInfo.Jet_massSoftDrop[0]<140.","Fat Jet SDmass cut 1")
+    auto d3 = d2.Filter("abs(FatJetInfo.Jet_pt[0])>300. && abs(FatJetInfo.Jet_pt[1])>300.","pt cut")
+        .Define("DeepAK8_jet0","FatJetInfo.Jet_DeepAK8_ZHbb[0]").Define("DeepAK8_jet1","FatJetInfo.Jet_DeepAK8_ZHbb[1]");
+    auto d4 = d3.Filter("DeepAK8_jet0 <= 1. && DeepAK8_jet0 > 0.8 && DeepAK8_jet1 <= 1. && DeepAK8_jet1 > 0.8","DeepAK8 cut");
+    auto d5 = d4.Filter("FatJetInfo.Jet_massSoftDrop[0]>90. && FatJetInfo.Jet_massSoftDrop[0]<140.","Fat Jet SDmass cut 1")
         .Filter("FatJetInfo.Jet_massSoftDrop[1]>90.&& FatJetInfo.Jet_massSoftDrop[1]<140.","Fat Jet SDmass cut 2");
 
-    auto d5 = d4.Filter("FatJetInfo.Jet_tau2[0]/FatJetInfo.Jet_tau1[0]<0.6 && FatJetInfo.Jet_tau2[1]/FatJetInfo.Jet_tau1[1]<0.6","tau21 cut");
-    auto b = d5.Define("lead_fatjet","ROOT::Math::PtEtaPhiMVector(FatJetInfo.Jet_pt[0],FatJetInfo.Jet_eta[0],FatJetInfo.Jet_phi[0],FatJetInfo.Jet_mass[0])");
+    auto d6 = d5.Filter("FatJetInfo.Jet_tau2[0]/FatJetInfo.Jet_tau1[0]<0.6 && FatJetInfo.Jet_tau2[1]/FatJetInfo.Jet_tau1[1]<0.6","tau21 cut");
+    auto b = d6.Define("lead_fatjet","ROOT::Math::PtEtaPhiMVector(FatJetInfo.Jet_pt[0],FatJetInfo.Jet_eta[0],FatJetInfo.Jet_phi[0],FatJetInfo.Jet_mass[0])");
     auto bb = b.Define("sublead_fatjet","ROOT::Math::PtEtaPhiMVector(FatJetInfo.Jet_pt[1],FatJetInfo.Jet_eta[1],FatJetInfo.Jet_phi[1],FatJetInfo.Jet_mass[1])");
     auto bbb = bb.Define("ind1"     ,"doSelection(t1.nJet,t1.Jet_pt,t1.Jet_eta,t1.Jet_phi,t1.Jet_mass,lead_fatjet,sublead_fatjet)[0]");
     auto bbbb = bbb.Define("ind2"   ,"doSelection(t1.nJet,t1.Jet_pt,t1.Jet_eta,t1.Jet_phi,t1.Jet_mass,lead_fatjet,sublead_fatjet)[1]");
     auto finalNode = bbbb.Filter("ind1>=0&&ind2>=0","vbf cut").Define("lead_fatjet_sdmass","FatJetInfo.Jet_massSoftDrop[0]").Define("sublead_fatjet_sdmass","FatJetInfo.Jet_massSoftDrop[1]");
+    auto defineNode = finalNode.Define("vbf_jet0","ROOT::Math::PtEtaPhiMVector(t1.Jet_pt[ind1],t1.Jet_eta[ind1],t1.Jet_phi[ind1],t1.Jet_mass[ind1])")
+                               .Define("vbf_jet1","ROOT::Math::PtEtaPhiMVector(t1.Jet_pt[ind2],t1.Jet_eta[ind2],t1.Jet_phi[ind2],t1.Jet_mass[ind2])")
+                               .Define("HHinvMass","(lead_fatjet+sublead_fatjet).M()")
+                               .Define("vbfjet_invmass","(vbf_jet0+vbf_jet1).M()");
     cout << "running" << endl;
-    initializer_list< std::string > outputlist = {"lead_fatjet","sublead_fatjet","lead_fatjet_sdmass","sublead_fatjet_sdmass","nJet","Jet_pt","Jet_eta","Jet_phi","Jet_mass","ind1","ind2"};
-    finalNode.Snapshot("mytree","database.root",outputlist);
-    finalNode.Report()->Print();
+    initializer_list< std::string > outputlist = {"lead_fatjet","sublead_fatjet","lead_fatjet_sdmass","sublead_fatjet_sdmass","DeepAK8_jet0","DeepAK8_jet1","nJet","Jet_pt","Jet_eta","Jet_phi","Jet_mass","ind1","ind2","vbf_jet0","vbf_jet1","HHinvMass","vbfjet_invmass"};
+    //initializer_list< std::string > outputlist = {"lead_fatjet","sublead_fatjet","lead_fatjet_sdmass","sublead_fatjet_sdmass","nJet","Jet_pt","Jet_eta","Jet_phi","Jet_mass","ind1","ind2","vbf_jet0","vbf_jet1","HHinvMass","vbfjet_invmass"};
+    defineNode.Snapshot("mytree","database.root",outputlist);
+    defineNode.Report()->Print();
 
 }
