@@ -20,78 +20,11 @@ inline Float_t deltaR(Float_t eta1, Float_t phi1, Float_t eta2, Float_t phi2) {
     Float_t deltaRSquare = (eta2-eta1)*(eta2-eta1)+(phi2-phi1)*(phi2-phi1);
     return TMath::Sqrt(deltaRSquare);
 }
-RVec<Int_t> doSelection(Int_t nThinJet, rvec_f Jet_pt, rvec_f Jet_eta, rvec_f Jet_phi, rvec_f Jet_mass, TLvector Hjet1, TLvector Hjet2) {
-    const Float_t dRCut = 1.2;
-    ROOT::Math::PtEtaPhiMVector v1, v2;
-    RVec<Int_t> vbfj;
-    for (Int_t i=0;i<nThinJet;i++) {
-        if (Jet_pt[i]<50.) continue;
-        if (abs(Jet_eta[i])>5.) continue;
-        if (deltaR(Hjet1.Eta(),Hjet1.Phi(),Jet_eta[i],Jet_phi[i])<dRCut) continue;
-        if (deltaR(Hjet2.Eta(),Hjet2.Phi(),Jet_eta[i],Jet_phi[i])<dRCut) continue;
-        vbfj.push_back(i);
-    }
-    for (UInt_t j=0;j<vbfj.size();j++) {
-        Int_t jj = vbfj[j];
-        for (UInt_t i=0;i<j;i++) {
-            Int_t ii = vbfj[i];
-            if (Jet_eta[ii]*Jet_eta[jj]>=0.) continue;
-            if (abs(Jet_eta[ii]-Jet_eta[jj])<5.) continue;
-            vecSetPtEtaPhiM(v1,Jet_pt[ii],Jet_eta[ii],Jet_phi[ii],Jet_mass[ii]);
-            vecSetPtEtaPhiM(v2,Jet_pt[jj],Jet_eta[jj],Jet_phi[jj],Jet_mass[jj]);
-            if ((v1+v2).M()<300.) continue;
-            return RVec<Int_t> {ii,jj};
-        }
-    }
-    return RVec<Int_t> {-1,-1};
-}
-RVec<Int_t> vbfBasis(Int_t nThinJet, rvec_f Jet_pt, rvec_f Jet_eta, rvec_f Jet_phi, rvec_f Jet_mass, TLvector Hjet1, TLvector Hjet2) {
-    RVec<Int_t> vbfj;
-    const Float_t dRCut = 1.2;
-    for (Int_t i=0;i<nThinJet;i++) {
-        if (Jet_pt[i]<50.) continue;
-        if (abs(Jet_eta[i])>5.) continue;
-        vbfj.push_back(i);
-    }
-    if (vbfj.size()<2) return RVec<Int_t> {-1,-1};
-    for (auto it = vbfj.begin(); it != vbfj.end(); ) {
-        if (deltaR(Hjet1.Eta(),Hjet1.Phi(),Jet_eta[vbfj[*it]],Jet_phi[vbfj[*it]])>dRCut &&
-            deltaR(Hjet2.Eta(),Hjet2.Phi(),Jet_eta[vbfj[*it]],Jet_phi[vbfj[*it]])>dRCut) ++it; 
-        else it = vbfj.erase(it);
-    }
-    if (vbfj.size()<2) return RVec<Int_t> {-2,-2};
-    else return vbfj;
-}
-RVec<Int_t> vbfCut(rvec_i vbfj, rvec_f Jet_eta) {
-    if (vbfj[0]<0) return  RVec<Int_t> {-1}; 
-    RVec<Int_t> vbfjCom;
-    for (UInt_t i=0;i<vbfj.size();i++) {
-        UInt_t ii = vbfj[i];
-        for (UInt_t j=0;j<i;j++) {
-            UInt_t jj = vbfj[j];
-            if (Jet_eta[ii]*Jet_eta[jj]>=0.) continue;
-            if (abs(Jet_eta[ii]-Jet_eta[jj])<5.) continue;
-            vbfjCom.push_back(jj*100+ii);
-        }
-    }
-    if (vbfjCom.size()>0) return vbfjCom;
-    else return RVec<Int_t> {-1111};
-}
-Int_t vbfInv (rvec_i vbfjCom,rvec_f Jet_pt, rvec_f Jet_eta, rvec_f Jet_phi, rvec_f Jet_mass, Float_t invMCut=300.) {
-    if (vbfjCom.size()<1 || vbfjCom[0] < 0) return -999;
-    ROOT::Math::PtEtaPhiMVector v1, v2;
-    Int_t ii,jj;
-    for (UInt_t i=0;i<vbfjCom.size();i++) {
-        ii = vbfjCom[i]/100;
-        jj = vbfjCom[i]%100;
-        vecSetPtEtaPhiM(v1,Jet_pt[ii],Jet_eta[ii],Jet_phi[ii],Jet_mass[ii]);
-        vecSetPtEtaPhiM(v2,Jet_pt[jj],Jet_eta[jj],Jet_phi[jj],Jet_mass[jj]);
-        if ((v1+v2).M()<invMCut) continue;
-        return vbfjCom[i];
-    }
-    return -1;
+RVec<Int_t> doSelection(Int_t nThinJet, rvec_f Jet_pt, rvec_f Jet_eta, rvec_f Jet_phi, rvec_f Jet_mass, TLvector Hjet1, TLvector Hjet2) ;
+RVec<Int_t> vbfBasis(Int_t nThinJet, rvec_f Jet_pt, rvec_f Jet_eta, rvec_f Jet_phi, rvec_f Jet_mass, TLvector Hjet1, TLvector Hjet2) ;
+RVec<Int_t> vbfCut(rvec_i vbfj, rvec_f Jet_eta) ;
+Int_t vbfInv (rvec_i vbfjCom,rvec_f Jet_pt, rvec_f Jet_eta, rvec_f Jet_phi, rvec_f Jet_mass, Float_t invMCut) ;
 
-}
 void nMinus1_anaCode(string inputFile="VBF_HHTo4B_CV_1_5_C2V_1_C3_1_mc_10K_ok.root",string outputFile="signalDataBase.root") {
     //ROOT::EnableImplicitMT(2);
     TFile *f = TFile::Open(inputFile.data());
@@ -123,7 +56,7 @@ void nMinus1_anaCode(string inputFile="VBF_HHTo4B_CV_1_5_C2V_1_C3_1_mc_10K_ok.ro
     auto b3 = b2.Define("vbfjCom","vbfInv(vbfjKinList,t1.Jet_pt,t1.Jet_eta,t1.Jet_phi,t1.Jet_mass,300)")
         .Filter("vbfjCom>=0","vbf jet invariance mass cut").Define("ind1","vbfjCom/100").Define("ind2","vbfjCom%100");
     /*
-    auto finalNode = d8.Define("vbf_jet0","ROOT::Math::PtEtaPhiMVector(t1.Jet_pt[ind1],t1.Jet_eta[ind1],t1.Jet_phi[ind1],t1.Jet_mass[ind1])")
+    auto finalNode = b3.Define("vbf_jet0","ROOT::Math::PtEtaPhiMVector(t1.Jet_pt[ind1],t1.Jet_eta[ind1],t1.Jet_phi[ind1],t1.Jet_mass[ind1])")
                                .Define("vbf_jet1","ROOT::Math::PtEtaPhiMVector(t1.Jet_pt[ind2],t1.Jet_eta[ind2],t1.Jet_phi[ind2],t1.Jet_mass[ind2])")
                                .Define("vbfjet_invmass","(vbf_jet0+vbf_jet1).M()");
     */
@@ -134,5 +67,82 @@ void nMinus1_anaCode(string inputFile="VBF_HHTo4B_CV_1_5_C2V_1_C3_1_mc_10K_ok.ro
     initializer_list< std::string > outputlist = {"lead_fatjet","sublead_fatjet","lead_fatjet_sdmass","sublead_fatjet_sdmass","HHinvMass","tau21_0","tau21_1","DeepAK8_jet0","DeepAK8_jet1"};
     finalNode.Snapshot("mytree",outputFile.data(),outputlist);
     finalNode.Report()->Print();
+
+}
+
+
+RVec<Int_t> doSelection(Int_t nThinJet, rvec_f Jet_pt, rvec_f Jet_eta, rvec_f Jet_phi, rvec_f Jet_mass, TLvector Hjet1, TLvector Hjet2) {
+    const Float_t dRCut = 1.2;
+    ROOT::Math::PtEtaPhiMVector v1, v2;
+    RVec<Int_t> vbfj;
+    for (Int_t i=0;i<nThinJet;i++) {
+        if (Jet_pt[i]<50.) continue;
+        if (abs(Jet_eta[i])>5.) continue;
+        if (deltaR(Hjet1.Eta(),Hjet1.Phi(),Jet_eta[i],Jet_phi[i])<dRCut) continue;
+        if (deltaR(Hjet2.Eta(),Hjet2.Phi(),Jet_eta[i],Jet_phi[i])<dRCut) continue;
+        vbfj.push_back(i);
+    }
+    for (UInt_t j=0;j<vbfj.size();j++) {
+        Int_t jj = vbfj[j];
+        for (UInt_t i=0;i<j;i++) {
+            Int_t ii = vbfj[i];
+            if (Jet_eta[ii]*Jet_eta[jj]>=0.) continue;
+            if (abs(Jet_eta[ii]-Jet_eta[jj])<5.) continue;
+            vecSetPtEtaPhiM(v1,Jet_pt[ii],Jet_eta[ii],Jet_phi[ii],Jet_mass[ii]);
+            vecSetPtEtaPhiM(v2,Jet_pt[jj],Jet_eta[jj],Jet_phi[jj],Jet_mass[jj]);
+            if ((v1+v2).M()<300.) continue;
+            return RVec<Int_t> {ii,jj};
+        }
+    }
+    return RVec<Int_t> {-1,-1};
+}
+
+RVec<Int_t> vbfBasis(Int_t nThinJet, rvec_f Jet_pt, rvec_f Jet_eta, rvec_f Jet_phi, rvec_f Jet_mass, TLvector Hjet1, TLvector Hjet2) {
+    RVec<Int_t> vbfj;
+    const Float_t dRCut = 1.2;
+    for (Int_t i=0;i<nThinJet;i++) {
+        if (Jet_pt[i]<50.) continue;
+        if (abs(Jet_eta[i])>5.) continue;
+        vbfj.push_back(i);
+    }
+    if (vbfj.size()<2) return RVec<Int_t> {-1,-1};
+    for (auto it = vbfj.begin(); it != vbfj.end(); ) {
+        if (deltaR(Hjet1.Eta(),Hjet1.Phi(),Jet_eta[vbfj[*it]],Jet_phi[vbfj[*it]])>dRCut &&
+            deltaR(Hjet2.Eta(),Hjet2.Phi(),Jet_eta[vbfj[*it]],Jet_phi[vbfj[*it]])>dRCut) ++it; 
+        else it = vbfj.erase(it);
+    }
+    if (vbfj.size()<2) return RVec<Int_t> {-2,-2};
+    else return vbfj;
+}
+
+RVec<Int_t> vbfCut(rvec_i vbfj, rvec_f Jet_eta) {
+    if (vbfj[0]<0) return  RVec<Int_t> {-1}; 
+    RVec<Int_t> vbfjCom;
+    for (UInt_t i=0;i<vbfj.size();i++) {
+        UInt_t ii = vbfj[i];
+        for (UInt_t j=0;j<i;j++) {
+            UInt_t jj = vbfj[j];
+            if (Jet_eta[ii]*Jet_eta[jj]>=0.) continue;
+            if (abs(Jet_eta[ii]-Jet_eta[jj])<5.) continue;
+            vbfjCom.push_back(jj*100+ii);
+        }
+    }
+    if (vbfjCom.size()>0) return vbfjCom;
+    else return RVec<Int_t> {-1111};
+}
+
+Int_t vbfInv (rvec_i vbfjCom,rvec_f Jet_pt, rvec_f Jet_eta, rvec_f Jet_phi, rvec_f Jet_mass, Float_t invMCut=300.) {
+    if (vbfjCom.size()<1 || vbfjCom[0] < 0) return -999;
+    ROOT::Math::PtEtaPhiMVector v1, v2;
+    Int_t ii,jj;
+    for (UInt_t i=0;i<vbfjCom.size();i++) {
+        ii = vbfjCom[i]/100;
+        jj = vbfjCom[i]%100;
+        vecSetPtEtaPhiM(v1,Jet_pt[ii],Jet_eta[ii],Jet_phi[ii],Jet_mass[ii]);
+        vecSetPtEtaPhiM(v2,Jet_pt[jj],Jet_eta[jj],Jet_phi[jj],Jet_mass[jj]);
+        if ((v1+v2).M()<invMCut) continue;
+        return vbfjCom[i];
+    }
+    return -1;
 
 }
