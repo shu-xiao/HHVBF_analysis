@@ -60,12 +60,12 @@ void nMinus1_anaCode(string inputFile="VBF_HHTo4B_CV_1_5_C2V_1_C3_1_mc_10K_ok.ro
                                .Define("vbf_jet1","ROOT::Math::PtEtaPhiMVector(t1.Jet_pt[ind2],t1.Jet_eta[ind2],t1.Jet_phi[ind2],t1.Jet_mass[ind2])")
                                .Define("vbfjet_invmass","(vbf_jet0+vbf_jet1).M()");
     */
-    auto finalNode = d8;
+    auto finalNode = b3;
                                
     cout << "running" << endl;
     //initializer_list< std::string > outputlist = {"lead_fatjet","sublead_fatjet","lead_fatjet_sdmass","sublead_fatjet_sdmass","tau21_0","tau21_1","DeepAK8_jet0","DeepAK8_jet1","nJet","Jet_pt","Jet_eta","Jet_phi","Jet_mass","ind1","ind2","vbf_jet0","vbf_jet1","HHinvMass","vbfjet_invmass"};
     initializer_list< std::string > outputlist = {"lead_fatjet","sublead_fatjet","lead_fatjet_sdmass","sublead_fatjet_sdmass","HHinvMass","tau21_0","tau21_1","DeepAK8_jet0","DeepAK8_jet1"};
-    finalNode.Snapshot("mytree",outputFile.data(),outputlist);
+    d8.Snapshot("mytree",outputFile.data(),outputlist);
     finalNode.Report()->Print();
 
 }
