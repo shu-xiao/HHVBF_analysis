@@ -28,7 +28,8 @@ void plotAll() {
     // Unit: pb
     const double xsTT = 984.50;
     const double xsSig = 1;
-    const double xsQCD = 0.000165445;
+    //const double xsQCD = 0.000165445;
+    const double xsQCD = 244.3;
     const int sigStr = 500;
 
     double wTT = getWeight(xsTT, tTT->GetEntries());

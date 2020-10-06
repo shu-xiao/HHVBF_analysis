@@ -26,7 +26,7 @@ RVec<Int_t> vbfCut(rvec_i vbfj, rvec_f Jet_eta) ;
 Int_t vbfInv (rvec_i vbfjCom,rvec_f Jet_pt, rvec_f Jet_eta, rvec_f Jet_phi, rvec_f Jet_mass, Float_t invMCut) ;
 
 void nMinus1_anaCode(string inputFile="VBF_HHTo4B_CV_1_5_C2V_1_C3_1_mc_10K_ok.root",string outputFile="signalDataBase.root") {
-    //ROOT::EnableImplicitMT(2);
+    //ROOT::EnableImplicitMT(2);  // error
     TFile *f = TFile::Open(inputFile.data());
     TTree *t1 = (TTree *)f->Get("btagana/ttree");
     TTree *t2 = (TTree *)f->Get("btaganaFatJets/ttree");
@@ -63,13 +63,14 @@ void nMinus1_anaCode(string inputFile="VBF_HHTo4B_CV_1_5_C2V_1_C3_1_mc_10K_ok.ro
     auto finalNode = d8;
                                
     cout << "running" << endl;
-    //initializer_list< std::string > outputlist = {"lead_fatjet","sublead_fatjet","lead_fatjet_sdmass","sublead_fatjet_sdmass","tau21_0","tau21_1","DeepAK8_jet0","DeepAK8_jet1","nJet","Jet_pt","Jet_eta","Jet_phi","Jet_mass","ind1","ind2","vbf_jet0","vbf_jet1","HHinvMass","vbfjet_invmass"};
-    initializer_list< std::string > outputlist = {"lead_fatjet","sublead_fatjet","lead_fatjet_sdmass","sublead_fatjet_sdmass","HHinvMass","tau21_0","tau21_1","DeepAK8_jet0","DeepAK8_jet1"};
+    initializer_list< std::string > outputlist = {"lead_fatjet","sublead_fatjet","lead_fatjet_sdmass","sublead_fatjet_sdmass","tau21_0","tau21_1","DeepAK8_jet0","DeepAK8_jet1","nJet","Jet_pt","Jet_eta","Jet_phi","Jet_mass","ind1","ind2","vbf_jet0","vbf_jet1","HHinvMass","vbfjet_invmass"};
+    //initializer_list< std::string > outputlist = {"lead_fatjet","sublead_fatjet","lead_fatjet_sdmass","sublead_fatjet_sdmass","HHinvMass","tau21_0","tau21_1","DeepAK8_jet0","DeepAK8_jet1"};
     finalNode.Snapshot("mytree",outputFile.data(),outputlist);
-    finalNode.Report()->Print();
+    d8.Report()->Print();
 
 }
 
+// end of main
 
 RVec<Int_t> doSelection(Int_t nThinJet, rvec_f Jet_pt, rvec_f Jet_eta, rvec_f Jet_phi, rvec_f Jet_mass, TLvector Hjet1, TLvector Hjet2) {
     const Float_t dRCut = 1.2;
