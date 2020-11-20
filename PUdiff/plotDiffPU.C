@@ -1,5 +1,6 @@
 #include "setNCUStyle.C"
 using namespace ROOT;
+#define runShort 0
 void setMax(TH1D* h1, TH1D* h2,double scale = 1.2) {
     double max1 = h1->GetMaximum();
     double max2 = h2->GetMaximum();
@@ -31,7 +32,10 @@ void plotDiffPU() {
     }
     vector<vector<TH1D*>> histPU200List(6);
     vector<vector<TH1D*>> histNoPUList(6);
+    vector<vector<TH2D*>> histPUtoSDMass(2);
+    vector<vector<TH2D*>> histPVtoSDMass(2);
     for (int i=0;i<6;i++) {
+        if (i!=0 && runShort) continue;
         pu200List[i]->Add(Form("mytree_VBF_HHTo4B_%s_nTuple_%s.root",parList[i].data(),puList[0].data()));
         if (i==0 || i==3 || i==4) {
             nopuList[i]->Add(Form("mytree_VBF_HHTo4B_%s_nTuple_%s_1.root",parList[i].data(),puList[1].data()));
@@ -56,6 +60,20 @@ void plotDiffPU() {
             .Define("vbfjet_deltaEta","abs(vbf_jet0.Eta()-vbf_jet1.Eta())");
         for (int j=0;j<varList.size();j++) histPU200List[i].push_back((TH1D*)d.Histo1D(varList[j].data())->Clone(Form("PU200_%s_%s",parList[i].data(),varList[j].data())));
         for (int j=0;j<varList.size();j++) histNoPUList[i].push_back((TH1D*)s.Histo1D(varList[j].data())->Clone(Form("NoPU_%s_%s",parList[i].data(),varList[j].data())));
+        string PUM2dName = Form("histPUtoSDMass_%s",parList[i].data());
+        string PUM2dName2 = Form("histPUtoSDMass2_%s",parList[i].data());
+        string PVM2dName = Form("histPVtoSDMass_%s",parList[i].data());
+        string PVM2dName2 = Form("histPVtoSDMass2_%s",parList[i].data());
+        auto temp2d_1 = d.Histo2D({PUM2dName.data(),PUM2dName.data(),10,150,250,10,90,140},"nPU","lead_fatjet_sdmass");
+        auto temp2d_2 = d.Histo2D({PUM2dName2.data(),PUM2dName2.data(),10,150,250,10,90,140},"nPU","sublead_fatjet_sdmass");
+        auto temp2d_3 = d.Histo2D({PVM2dName.data(),PVM2dName.data(),10,100,200,10,90,140},"nPV","lead_fatjet_sdmass");
+        auto temp2d_4 = d.Histo2D({PVM2dName2.data(),PVM2dName2.data(),10,100,200,10,90,140},"nPV","sublead_fatjet_sdmass");
+        //temp2d_1->Draw("colz");
+        //temp2d_2->Draw("colz");
+        histPUtoSDMass[0].push_back((TH2D*)temp2d_1->Clone(Form("PUtoFatJet1SDMass_%s",parList[i].data())));
+        histPUtoSDMass[1].push_back((TH2D*)temp2d_2->Clone(Form("PUtoFatJet2SDMass_%s",parList[i].data())));
+        histPVtoSDMass[0].push_back((TH2D*)temp2d_3->Clone(Form("PVtoFatJet1SDMass_%s",parList[i].data())));
+        histPVtoSDMass[1].push_back((TH2D*)temp2d_4->Clone(Form("PVtoFatJet2SDMass_%s",parList[i].data())));
     }
     cout << "finish loading" << endl;
 
@@ -70,6 +88,7 @@ void plotDiffPU() {
     TLegend* leg = 0;
     for (int j=0;j<varList.size();j++) {
         for (int i=0;i<6;i++) {
+            if (i!=0 && runShort) continue;
             if (!leg) {
                 leg = new TLegend(0.7,0.7,0.9,0.9);
                 leg->AddEntry(histNoPUList[i][j],"No PU");
@@ -96,5 +115,57 @@ void plotDiffPU() {
         }
         c1->Print(pdfName.data());
     }
+    /*
+    histPUtoSDMass[0]->Draw("colz");
+    c1->Print(pdfName.data());
+    histPVtoSDMass[0]->Draw("colz");
+    c1->Print(pdfName.data());
+    */
+    cout << "2D plot" << endl;
+    int pind[] = {0,3,5};
+    for (int i=0;i<6;i++)  {c1->cd(i+1);histPUtoSDMass[0][i]->SetTitle(Form("%s;nPU;AK8jet1_SDMass",parList[i].data()));histPUtoSDMass[0][i]->Draw("colz"); }
+    c1->Print(pdfName.data());
+    
+    for (int i=0;i<3;i++) {
+        c1->cd(i+1);
+        histPUtoSDMass[0][pind[i]]->ProfileX(((string)histPUtoSDMass[0][pind[i]]->GetName()+"_ProfileX").data())->Draw();
+        c1->cd(i+4);
+        histPUtoSDMass[0][pind[i]]->ProfileY(((string)histPUtoSDMass[0][pind[i]]->GetName()+"_ProfileY").data())->Draw();
+    }
+    c1->Print(pdfName.data());
+    
+    for (int i=0;i<6;i++)  {c1->cd(i+1);histPUtoSDMass[1][i]->SetTitle(Form("%s;nPU;AK8jet2_SDMass",parList[i].data()));histPUtoSDMass[1][i]->Draw("colz"); }
+    c1->Print(pdfName.data());
+    
+    for (int i=0;i<3;i++) {
+        c1->cd(i+1);
+        histPUtoSDMass[1][pind[i]]->ProfileX(((string)histPUtoSDMass[1][pind[i]]->GetName()+"_ProfileX").data())->Draw();
+        c1->cd(i+4);
+        histPUtoSDMass[1][pind[i]]->ProfileY(((string)histPUtoSDMass[1][pind[i]]->GetName()+"_ProfileY").data())->Draw();
+    }
+    c1->Print(pdfName.data());
+    
+    for (int i=0;i<6;i++)  {c1->cd(i+1);histPVtoSDMass[0][i]->SetTitle(Form("%s;dof_PV;AK8jet1_SDMass",parList[i].data()));histPVtoSDMass[0][i]->Draw("colz"); }
+    c1->Print(pdfName.data());
+    
+    for (int i=0;i<3;i++) {
+        c1->cd(i+1);
+        histPVtoSDMass[0][pind[i]]->ProfileX(((string)histPVtoSDMass[0][pind[i]]->GetName()+"_ProfileX").data())->Draw();
+        c1->cd(i+4);
+        histPVtoSDMass[0][pind[i]]->ProfileY(((string)histPVtoSDMass[0][pind[i]]->GetName()+"_ProfileY").data())->Draw();
+    }
+    c1->Print(pdfName.data());
+    
+    for (int i=0;i<6;i++)  {c1->cd(i+1);histPVtoSDMass[1][i]->SetTitle(Form("%s;dof_PV;AK8jet2_SDMass",parList[i].data()));histPVtoSDMass[1][i]->Draw("colz"); }
+    c1->Print(pdfName.data());
+    for (int i=0;i<3;i++) {
+        c1->cd(i+1);
+        histPVtoSDMass[1][pind[i]]->ProfileX(((string)histPVtoSDMass[1][pind[i]]->GetName()+"_ProfileX").data())->Draw();
+        c1->cd(i+4);
+        histPVtoSDMass[1][pind[i]]->ProfileY(((string)histPVtoSDMass[1][pind[i]]->GetName()+"_ProfileY").data())->Draw();
+    }
+    c1->Print(pdfName.data());
+    cout << "profile" << endl;
+        
     c1->Print((pdfName+"]").data());
 }
