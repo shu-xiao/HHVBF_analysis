@@ -20,9 +20,9 @@ void effiSum() {
     TH1F * h1 = new TH1F("h1","",10,0,10);
     TH1F * h2 = new TH1F("h2","",10,0,10);
     THStack *hs_effi = new THStack("hffi","cut efficiency X 100");
-    THStack *hssig_effi = new THStack("hffi_sig","signal efficiency of each selection");
+    THStack *hssig_effi = new THStack("hffi_sig","Signal Efficiency of Each Selection");
     THStack *hs_cumeffi = new THStack("hffi","cumulative cut efficiency");
-    THStack *hs_sigeffi = new THStack("hffi_sig","signal cumulative efficiency of each selection");
+    THStack *hs_sigeffi = new THStack("hffi_sig","Signal Cumulative Efficiency of Each Selection");
     vector<string> namelist = {"QCD_600toInf","TT","VBF_HHTo4B_CV_1_5_C2V_1_C3_1","VBF_HHTo4B_CV_0_5_C2V_1_C3_1","VBF_HHTo4B_CV_1_C2V_2_C3_1",\
     "VBF_HHTo4B_CV_1_C2V_1_C3_1","VBF_HHTo4B_CV_1_C2V_1_C3_0","VBF_HHTo4B_CV_1_5_C2V_1_C3_2"};
 
