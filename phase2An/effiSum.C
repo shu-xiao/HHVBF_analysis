@@ -20,29 +20,29 @@ void effiSum() {
     TH1F * h1 = new TH1F("h1","",10,0,10);
     TH1F * h2 = new TH1F("h2","",10,0,10);
     THStack *hs_effi = new THStack("hffi","cut efficiency X 100");
-    THStack *hssig_effi = new THStack("hffi_sig","PU200 signal cut efficiency X 100");
+    THStack *hssig_effi = new THStack("hffi_sig","signal efficiency of each selection");
     THStack *hs_cumeffi = new THStack("hffi","cumulative cut efficiency");
-    THStack *hs_sigeffi = new THStack("hffi_sig","PU200 signal cumulative cut efficiency");
+    THStack *hs_sigeffi = new THStack("hffi_sig","signal cumulative efficiency of each selection");
     vector<string> namelist = {"QCD_600toInf","TT","VBF_HHTo4B_CV_1_5_C2V_1_C3_1","VBF_HHTo4B_CV_0_5_C2V_1_C3_1","VBF_HHTo4B_CV_1_C2V_2_C3_1",\
     "VBF_HHTo4B_CV_1_C2V_1_C3_1","VBF_HHTo4B_CV_1_C2V_1_C3_0","VBF_HHTo4B_CV_1_5_C2V_1_C3_2"};
 
     TH1F* heffi_QCD_600toInf = new TH1F("h_QCD_600toInf","",10,0,10);
     TH1F* heffi_TT = new TH1F("h_TT","",10,0,10);
-    TH1F* heffi_VBF_HHTo4B_CV_1_5_C2V_1_C3_1 = new TH1F("h_VBF_HHTo4B_CV_1_5_C2V_1_C3_1","",10,0,10);
-    TH1F* heffi_VBF_HHTo4B_CV_0_5_C2V_1_C3_1 = new TH1F("h_VBF_HHTo4B_CV_0_5_C2V_1_C3_1","",10,0,10);
-    TH1F* heffi_VBF_HHTo4B_CV_1_C2V_2_C3_1 = new TH1F("h_VBF_HHTo4B_CV_1_C2V_2_C3_1","",10,0,10);
-    TH1F* heffi_VBF_HHTo4B_CV_1_C2V_1_C3_1 = new TH1F("h_VBF_HHTo4B_CV_1_C2V_1_C3_1","",10,0,10);
-    TH1F* heffi_VBF_HHTo4B_CV_1_C2V_1_C3_0 = new TH1F("h_VBF_HHTo4B_CV_1_C2V_1_C3_0","",10,0,10);
-    TH1F* heffi_VBF_HHTo4B_CV_1_C2V_1_C3_2 = new TH1F("h_VBF_HHTo4B_CV_1_C2V_1_C3_2","",10,0,10);
+    TH1F* heffi_VBF_HHTo4B_CV_1_5_C2V_1_C3_1 = new TH1F("Effi_VBF_HHTo4B_CV_1_5_C2V_1_C3_1","",10,0,10);
+    TH1F* heffi_VBF_HHTo4B_CV_0_5_C2V_1_C3_1 = new TH1F("Effi_VBF_HHTo4B_CV_0_5_C2V_1_C3_1","",10,0,10);
+    TH1F* heffi_VBF_HHTo4B_CV_1_C2V_2_C3_1 = new TH1F("Effi_VBF_HHTo4B_CV_1_C2V_2_C3_1","",10,0,10);
+    TH1F* heffi_VBF_HHTo4B_CV_1_C2V_1_C3_1 = new TH1F("Effi_VBF_HHTo4B_CV_1_C2V_1_C3_1","",10,0,10);
+    TH1F* heffi_VBF_HHTo4B_CV_1_C2V_1_C3_0 = new TH1F("Effi_VBF_HHTo4B_CV_1_C2V_1_C3_0","",10,0,10);
+    TH1F* heffi_VBF_HHTo4B_CV_1_C2V_1_C3_2 = new TH1F("Effi_VBF_HHTo4B_CV_1_C2V_1_C3_2","",10,0,10);
 
     TH1F* hcumeffi_QCD_600toInf = new TH1F("hcum_QCD_600toInf","",10,0,10);
     TH1F* hcumeffi_TT = new TH1F("hcum_TT","",10,0,10);
-    TH1F* hcumeffi_VBF_HHTo4B_CV_1_5_C2V_1_C3_1 = new TH1F("hcum_VBF_HHTo4B_CV_1_5_C2V_1_C3_1","",10,0,10);
-    TH1F* hcumeffi_VBF_HHTo4B_CV_0_5_C2V_1_C3_1 = new TH1F("hcum_VBF_HHTo4B_CV_0_5_C2V_1_C3_1","",10,0,10);
-    TH1F* hcumeffi_VBF_HHTo4B_CV_1_C2V_2_C3_1 = new TH1F("hcum_VBF_HHTo4B_CV_1_C2V_2_C3_1","",10,0,10);
-    TH1F* hcumeffi_VBF_HHTo4B_CV_1_C2V_1_C3_1 = new TH1F("hcum_VBF_HHTo4B_CV_1_C2V_1_C3_1","",10,0,10);
-    TH1F* hcumeffi_VBF_HHTo4B_CV_1_C2V_1_C3_0 = new TH1F("hcum_VBF_HHTo4B_CV_1_C2V_1_C3_0","",10,0,10);
-    TH1F* hcumeffi_VBF_HHTo4B_CV_1_C2V_1_C3_2 = new TH1F("hcum_VBF_HHTo4B_CV_1_C2V_1_C3_1","",10,0,10);
+    TH1F* hcumeffi_VBF_HHTo4B_CV_1_5_C2V_1_C3_1 = new TH1F("CumEffi_VBF_HHTo4B_CV_1_5_C2V_1_C3_1","",10,0,10);
+    TH1F* hcumeffi_VBF_HHTo4B_CV_0_5_C2V_1_C3_1 = new TH1F("CumEffi_VBF_HHTo4B_CV_0_5_C2V_1_C3_1","",10,0,10);
+    TH1F* hcumeffi_VBF_HHTo4B_CV_1_C2V_2_C3_1 = new TH1F("CumEffi_VBF_HHTo4B_CV_1_C2V_2_C3_1","",10,0,10);
+    TH1F* hcumeffi_VBF_HHTo4B_CV_1_C2V_1_C3_1 = new TH1F("CumEffi_VBF_HHTo4B_CV_1_C2V_1_C3_1","",10,0,10);
+    TH1F* hcumeffi_VBF_HHTo4B_CV_1_C2V_1_C3_0 = new TH1F("CumEffi_VBF_HHTo4B_CV_1_C2V_1_C3_0","",10,0,10);
+    TH1F* hcumeffi_VBF_HHTo4B_CV_1_C2V_1_C3_2 = new TH1F("CumEffi_VBF_HHTo4B_CV_1_C2V_1_C3_1","",10,0,10);
 
     vector<vector<int>> dataList = {nEve_QCD_600toInf, nEve_TT,\
         nEve_VBF_HHTo4B_CV_1_C2V_2_C3_1,nEve_VBF_HHTo4B_CV_0_5_C2V_1_C3_1,\
@@ -69,7 +69,7 @@ void effiSum() {
     for (int j=0;j<cutList.size();j++) h1->Fill(cutList[j].data(),0); 
     for (int j=0;j<cutList.size();j++) h2->Fill(cutList[j].data(),0); 
     
-    c1->Print("test.pdf[");
+    c1->Print("hcumEffi.pdf[");
     int colorList[] = {kBlack,kGray+1,kRed,kOrange,kPink-4,kViolet,kMagenta-9,kAzure};
     int markerList[] = {kFullCircle,kFullSquare,kFullTriangleUp,kFullStar,kFullDiamond,kFullCross};
     for (int i=0;i<hlist.size();i++) {
@@ -82,7 +82,7 @@ void effiSum() {
         }
         hlist[i]->Divide(h2,h1,1,1,"b");
         hlist[i]->Draw("hist text 0");
-        c1->Print("test.pdf");
+        c1->Print("hcumEffi.pdf");
 
 
         for (int j=0;j<dataList[i].size();j++) {
@@ -105,7 +105,7 @@ void effiSum() {
         for (int j=0;j<tgtemp->GetN();j++) tgtemp->SetPointError(j,0,tgtemp->GetErrorY(j)); 
         tgList.push_back(tgtemp);
         //tgList.push_back(new TGraphErrors(hcumlist[i]));
-        c1->Print("test.pdf");
+        c1->Print("hcumEffi.pdf");
     }
     for (int i=0;i<tgList.size();i++) mg->Add(tgList[i],"APL");
     for (int i=0;i<hlist.size();i++) {
@@ -122,30 +122,31 @@ void effiSum() {
     }
     hs_effi->Draw("nostackb");
     gPad->BuildLegend(0.85,0.75,0.99,0.95,"","F");
-    c1->Print("test.pdf");
-    //hssig_effi->GetYaxis()->SetTitle("Efficiency (%)");
+    c1->Print("hcumEffi.pdf");
+    hssig_effi->SetMaximum(150);
     hssig_effi->Draw("nostackb");
-    auto leg = gPad->BuildLegend(0.85,0.75,0.99,0.95,"","F");
+    auto leg = gPad->BuildLegend(0.7,0.7,0.95,0.95,"","F");
     hssig_effi->Add(h_empty,"hist text 0");
     hssig_effi->Draw("nostackb");
+    hssig_effi->GetYaxis()->SetTitle("Efficiency (%)");
     leg->Draw();
-    c1->Print("test.pdf");
+    c1->Print("hcumEffi.pdf");
 
 
     //gStyle->SetHistLineWidth(2);
     hs_cumeffi->Draw("nostack");
-    gPad->BuildLegend(0.8,0.75,0.99,0.95,"","");
+    gPad->BuildLegend(0.7,0.70,0.99,0.95,"","");
     c1->SetLogy();
-    c1->Print("test.pdf");
-    //hs_sigeffi->GetYaxis()->SetTitle("Cumulative Efficiency");
+    c1->Print("hcumEffi.pdf");
     hs_sigeffi->Draw("nostack");
-    gPad->BuildLegend(0.8,0.75,0.99,0.95,"","");
+    hs_sigeffi->GetYaxis()->SetTitle("Cumulative Efficiency");
+    gPad->BuildLegend(0.67,0.65,0.95,0.9,"","");
     c1->SetLogy();
-    c1->Print("test.pdf");
+    c1->Print("hcumEffi.pdf");
     mg->Draw("APL");
     gPad->BuildLegend(0.8,0.75,0.99,0.95,"","");
     c1->SetLogy();
-    c1->Print("test.pdf");
+    c1->Print("hcumEffi.pdf");
 
-    c1->Print("test.pdf]");
+    c1->Print("hcumEffi.pdf]");
 }
