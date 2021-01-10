@@ -24,7 +24,7 @@ void effiSum_noTau21() {
     THStack *hs_cumeffi = new THStack("hffi","cumulative cut efficiency");
     THStack *hs_sigeffi = new THStack("hffi_sig","Signal Cumulative Efficiency of Each Selection");
     vector<string> namelist = {"QCD_600toInf","TT","VBF_HHTo4B_CV_1_5_C2V_1_C3_1","VBF_HHTo4B_CV_0_5_C2V_1_C3_1","VBF_HHTo4B_CV_1_C2V_2_C3_1",\
-    "VBF_HHTo4B_CV_1_C2V_1_C3_1","VBF_HHTo4B_CV_1_C2V_1_C3_0","VBF_HHTo4B_CV_1_5_C2V_1_C3_2"};
+    "VBF_HHTo4B_CV_1_C2V_1_C3_1","VBF_HHTo4B_CV_1_C2V_1_C3_0","VBF_HHTo4B_CV_1_C2V_1_C3_2"};
 
     TH1F* heffi_QCD_600toInf = new TH1F("h_QCD_600toInf","",10,0,10);
     TH1F* heffi_TT = new TH1F("h_TT","",10,0,10);
@@ -42,7 +42,7 @@ void effiSum_noTau21() {
     TH1F* hcumeffi_VBF_HHTo4B_CV_1_C2V_2_C3_1 = new TH1F("CumEffi_VBF_HHTo4B_CV_1_C2V_2_C3_1","",10,0,10);
     TH1F* hcumeffi_VBF_HHTo4B_CV_1_C2V_1_C3_1 = new TH1F("CumEffi_VBF_HHTo4B_CV_1_C2V_1_C3_1","",10,0,10);
     TH1F* hcumeffi_VBF_HHTo4B_CV_1_C2V_1_C3_0 = new TH1F("CumEffi_VBF_HHTo4B_CV_1_C2V_1_C3_0","",10,0,10);
-    TH1F* hcumeffi_VBF_HHTo4B_CV_1_C2V_1_C3_2 = new TH1F("CumEffi_VBF_HHTo4B_CV_1_C2V_1_C3_1","",10,0,10);
+    TH1F* hcumeffi_VBF_HHTo4B_CV_1_C2V_1_C3_2 = new TH1F("CumEffi_VBF_HHTo4B_CV_1_C2V_1_C3_2","",10,0,10);
 
     vector<vector<int>> dataList = {nEve_QCD_600toInf, nEve_TT,\
         nEve_VBF_HHTo4B_CV_1_C2V_2_C3_1,nEve_VBF_HHTo4B_CV_0_5_C2V_1_C3_1,\
